@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Torre de Hanoi</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            margin-top: 50px;
+        }
+
+        .tower {
+            width: 150px;
+            height: 250px;
+            border: 2px solid #333;
+            margin: 0 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .disc {
+            background-color: #4CAF50;
+            width: 100px;
+            height: 20px;
+            margin: 10px 0;
+            transition: all 0.3s ease;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Torre de Hanói</h1>
+    <div class="container">
+        <div class="tower" id="tower1"></div>
+        <div class="tower" id="tower2"></div>
+        <div class="tower" id="tower3"></div>
+    </div>
+    <button onclick="resetGame()">Reiniciar</button>
+
+    <script>
+        var numDiscs = 3;
+        var moves = 0;
+
+        var towers = [
+            { id: 'tower1', discs: [] },
+            { id: 'tower2', discs: [] },
+            { id: 'tower3', discs: [] }
+        ];
+
+        var selectedDisc = null;
+
+        function initializeGame() {
+            moves = 0;
+            towers.forEach(function(tower) {
+                tower.discs = [];
+            });
+
+            for (var i = numDiscs; i >= 1; i--) {
+                towers[0].discs.push(i);
+            }
+
+            renderTowers();
+        }
+
+        function renderTowers() {
+            towers.forEach(function(tower) {
+                var towerElem = document.getElementById(tower.id);
+                towerElem.innerHTML = '';
+
+                tower.discs.forEach(function(discSize) {
+                    var discElem = document.createElement('div');
+                    discElem.className = 'disc';
+                    discElem.style.width = (100 + discSize * 20) + 'px';
+                    towerElem.appendChild(discElem);
+                });
+            });
+        }
+
+        function selectDisc(towerId) {
+            var tower = towers.find(function(tower) {
+                return tower.id === towerId;
+            });
+
+            if (selectedDisc === null && tower.discs.length > 0) {
+                selectedDisc = tower.discs.pop();
+            } else if (selectedDisc !== null && (tower.discs.length === 0 || selectedDisc < tower.discs[tower.discs.length - 1])) {
+                tower.discs.push(selectedDisc);
+                selectedDisc = null;
+                moves++;
+            }
+
+            renderTowers();
+
+            if (isGameOver()) {
+                setTimeout(function() {
+                    alert('Parabéns! Você completou o jogo em ' + moves + ' movimento(s).');
+                    resetGame();
+                }, 100);
+            }
+        }
+
+        function isGameOver() {
+            return towers[0].discs.length === 0 && towers[1].discs.length === 0 && moves > 0;
+        }
+
+        function resetGame() {
+            selectedDisc = null;
+            initializeGame();
+        }
+
+        initializeGame();
+    </script>
+    
+</body>
+</html>
